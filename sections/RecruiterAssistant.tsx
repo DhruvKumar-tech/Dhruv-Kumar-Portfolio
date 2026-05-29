@@ -8,101 +8,80 @@ import { FaRobot } from "react-icons/fa";
 
 import { IoClose } from "react-icons/io5";
 
-export default function Chatbot() {
+export default function RecruiterAssistant() {
 
   const [open, setOpen] = useState(false);
 
   const [showBubble, setShowBubble] = useState(false);
 
-  const [messages, setMessages] = useState([
+  const [message, setMessage] = useState("");
+
+  const [loading, setLoading] = useState(false);
+
+  const [chat, setChat] = useState<
+    { role: string; content: string }[]
+  >([
     {
       role: "assistant",
       content:
-        "Welcome 👋 I’m Dhruv’s AI Recruiter Assistant. Ask me about projects, skills, dashboards, or experience.",
+        "Welcome 👋 I am Dhruv's AI recruiter assistant. How can I help you today?",
     },
   ]);
 
-  const [input, setInput] = useState("");
-
   useEffect(() => {
 
-  // SHOW AFTER DELAY
-  const showTimer = setTimeout(() => {
-    setShowBubble(true);
-  }, 1500);
+    const timer = setTimeout(() => {
+      setShowBubble(true);
+    }, 2000);
 
-  // AUTO HIDE
-  const hideTimer = setTimeout(() => {
-    setShowBubble(false);
-  }, 7000);
+    return () => clearTimeout(timer);
 
-  // HIDE ON SCROLL
-  const handleScroll = () => {
-    setShowBubble(false);
-  };
+  }, []);
 
-  window.addEventListener("scroll", handleScroll);
+  async function sendMessage() {
 
-  return () => {
-
-    clearTimeout(showTimer);
-
-    clearTimeout(hideTimer);
-
-    window.removeEventListener("scroll", handleScroll);
-
-  };
-
-}, []);
-
-  const handleSend = () => {
-
-    if (!input.trim()) return;
+    if (!message.trim()) return;
 
     const userMessage = {
       role: "user",
-      content: input,
+      content: message,
     };
 
-    let assistantReply =
-      "Dhruv specializes in Data Analytics, Machine Learning, NLP systems, dashboards, and AI-powered applications.";
+    setChat((prev) => [...prev, userMessage]);
 
-    if (input.toLowerCase().includes("project")) {
-      assistantReply =
-        "Dhruv has built AI-powered projects including a Movie Recommendation System, Emotion Classification platform, and Emergency Triage Predictor.";
-    }
+    setLoading(true);
 
-    if (input.toLowerCase().includes("skills")) {
-      assistantReply =
-        "Key skills include Python, SQL, Power BI, Machine Learning, NLP, Streamlit, Excel, and Data Analytics.";
-    }
+    const response = await fetch("/api/chat", {
+      method: "POST",
 
-    if (input.toLowerCase().includes("dashboard")) {
-      assistantReply =
-        "Dhruv has experience building analytics dashboards for KPI tracking, reporting automation, and operational insights.";
-    }
+      headers: {
+        "Content-Type": "application/json",
+      },
 
-    if (input.toLowerCase().includes("experience")) {
-      assistantReply =
-        "Dhruv has experience in analytics, reporting workflows, machine learning systems, and business intelligence projects.";
-    }
+      body: JSON.stringify({
+        message,
+      }),
+    });
 
-    setMessages((prev) => [
+    const data = await response.json();
+
+    setChat((prev) => [
       ...prev,
-      userMessage,
       {
         role: "assistant",
-        content: assistantReply,
+        content: data.message,
       },
     ]);
 
-    setInput("");
-  };
+    setMessage("");
+
+    setLoading(false);
+  }
 
   return (
     <>
 
-      {/* WELCOME MESSAGE */}
+      {/* WELCOME BUBBLE */}
       <AnimatePresence>
 
         {!open && showBubble && (
@@ -119,7 +98,6 @@ export default function Chatbot() {
             How can I help you?
 
           </motion.div>
-
         )}
 
       </AnimatePresence>
@@ -173,7 +151,7 @@ export default function Chatbot() {
             {/* CHAT AREA */}
             <div className="flex-1 space-y-5 overflow-y-auto p-6">
 
-              {messages.map((msg, index) => (
+              {chat.map((msg, index) => (
 
                 <div
                   key={index}
@@ -185,8 +163,15 @@ export default function Chatbot() {
                 >
                   {msg.content}
                 </div>
-
               ))}
+
+              {loading && (
+
+                <div className="w-fit rounded-3xl bg-zinc-800 px-5 py-4 text-zinc-300">
+                  Thinking...
+                </div>
+
+              )}
 
             </div>
 
@@ -196,14 +181,14 @@ export default function Chatbot() {
               <div className="flex gap-3">
 
                 <input
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  placeholder="Ask about projects, skills..."
-                  className="flex-1 rounded-2xl border border-zinc-700 bg-zinc-900 px-5 py-4 text-sm outline-none"
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  placeholder="Ask about projects, AI systems..."
+                  className="flex-1 rounded-2xl border border-zinc-700 bg-zinc-900 px-5 py-4 text-sm outline-none transition focus:border-white"
                 />
 
                 <button
-                  onClick={handleSend}
+                  onClick={sendMessage}
                   className="rounded-2xl bg-white px-6 py-4 font-semibold text-black transition hover:scale-105"
                 >
                   Send
@@ -214,11 +199,9 @@ export default function Chatbot() {
             </div>
 
           </motion.div>
-
         )}
 
       </AnimatePresence>
-
     </>
   );
 }

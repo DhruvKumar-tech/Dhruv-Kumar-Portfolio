@@ -6,6 +6,10 @@ import Chatbot from "@/sections/Chatbot";
 import Github from "@/sections/Github";
 import Kaggle from "@/sections/Kaggle";
 import Contact from "@/sections/Contact";
+import LiveApps from "@/sections/LiveApps";
+import FloatingDock from "@/components/FloatingDock";
+import Timeline from "@/sections/Timeline";
+import GithubStats from "@/sections/GithubStats";
 
 export default function Home() {
   return (
@@ -13,11 +17,15 @@ export default function Home() {
       <Navbar />
       <Hero />
       <Projects />
+      <LiveApps />
+      <Timeline />
+      <GithubStats />
       <Dashboard />
       <Github />
       <Kaggle />
       <Chatbot />
       <Contact />
+      <FloatingDock />
     </main>
   );
 }

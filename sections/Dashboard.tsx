@@ -26,7 +26,7 @@ export default function Dashboard() {
           </p>
         </motion.div>
 
-        <div className="grid gap-8 md:grid-cols-2">
+        <div className="flex gap-8 overflow-x-auto pb-6 scrollbar-hide">
 
           {/* Dashboard Card 1 */}
           <motion.div
@@ -34,7 +34,7 @@ export default function Dashboard() {
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
-            className="overflow-hidden rounded-3xl border border-zinc-800 bg-zinc-900"
+            className="min-w-[420px] overflow-hidden rounded-3xl border border-zinc-800 bg-zinc-900"
           >
 
             <div className="flex h-72 items-center justify-center bg-gradient-to-br from-zinc-800 to-black text-zinc-500">

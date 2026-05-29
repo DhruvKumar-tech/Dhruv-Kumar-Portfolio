@@ -8,7 +8,9 @@ const projects = [
     description:
       "AI-powered recommendation engine using NLP, Word2Vec embeddings, semantic filtering, and REST APIs.",
     tech: ["Python", "NLP", "Word2Vec", "Streamlit"],
-    status: "Latest Project",
+    github: "https://github.com/DhruvKumar-tech/Movie-Recommendation-System",
+    live: "https://find-your-next-movie-kgdljnue7avhdmacwlirbs.streamlit.app/",
+    image: "/screenshots/movie.png",
   },
 
   {
@@ -17,6 +19,9 @@ const projects = [
       "Multi-class emotion detection platform using TF-IDF, BERT, XGBoost, and NLP pipelines.",
     tech: ["BERT", "XGBoost", "NLP"],
     status: "Live AI Model",
+    github: "https://github.com/DhruvKumar-tech/Emotion-Classification",
+    live: "https://emotion-classification-zxymqlfgimh4p7jq2uinja.streamlit.app/",
+    image: "/screenshots/emotion.png",
   },
 
   {
@@ -25,6 +30,7 @@ const projects = [
       "Healthcare AI system designed to predict patient urgency levels and assist emergency workflows.",
     tech: ["LightGBM", "Healthcare AI", "Streamlit"],
     status: "Dashboard Ready",
+    image: "/screenshots/triage.png",
   },
 ];
 
@@ -52,7 +58,7 @@ export default function Projects() {
           </p>
         </motion.div>
 
-        <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
+        <div className="flex gap-8 overflow-x-auto pb-6 scrollbar-hide">
 
           {projects.map((project, index) => (
             <motion.div
@@ -61,11 +67,15 @@ export default function Projects() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.2 }}
               viewport={{ once: true }}
-              className="group overflow-hidden rounded-3xl border border-zinc-800 bg-zinc-950 p-7 transition hover:-translate-y-3 hover:border-zinc-600"
+              className="min-w-[420px] rounded-3xl border border-zinc-800 bg-zinc-900/70 p-6 shadow-2xl backdrop-blur transition duration-500 hover:-translate-y-3 hover:border-zinc-600"
             >
+              <div className="overflow-hidden rounded-3xl">
 
-              <div className="mb-6 flex h-52 items-center justify-center rounded-2xl bg-gradient-to-br from-zinc-800 to-black text-center text-zinc-500">
-                Project Screenshot Preview
+                <img
+                  src={project.image}
+                  alt={project.title}
+                  className="h-60 w-full object-cover transition duration-500 hover:scale-105"
+                />
               </div>
 
               <div className="mb-4 inline-flex rounded-full bg-zinc-800 px-4 py-1 text-sm text-zinc-300">
