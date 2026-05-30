@@ -48,7 +48,7 @@ export default function Dashboard() {
                   preload="auto"
                   className="h-full w-full object-contain rounded-xl shadow-lg"
                 >
-                  <source src="/videos/dashboard-preview.mp4" type="video/mp4" />
+                  <source src="/videos/Sales Analytics Dashboard.mp4" type="video/mp4" />
                   Your browser does not support the video tag.
                 </video>
                 
