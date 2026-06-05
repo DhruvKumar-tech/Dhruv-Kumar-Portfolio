@@ -21,7 +21,7 @@ export default function AnimatedBackground() {
             "linear-gradient(270deg, #3b82f6, #6366f1, #a855f7, #f97316)",
           backgroundSize: "400% 400%",
         }}
-        className="absolute inset-0 opacity-40"
+        className="absolute inset-0 opacity-60"
       />
 
       {/* Optional Dark Overlay */}
