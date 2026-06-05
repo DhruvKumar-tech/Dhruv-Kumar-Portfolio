@@ -88,7 +88,7 @@ export default function Hero()
             </span>
           </motion.h1>
           <h2 className="mt-4 text-2xl font-semibold text-zinc-300">
-            Dhruv Kumar · Data Analyst · Power BI · Python · SQL
+            Data Analyst · Power BI · Python · SQL
           </h2>
           <motion.p
             initial={{ opacity: 0 }}
