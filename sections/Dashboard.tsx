@@ -54,7 +54,7 @@ export default function Dashboard() {
         </motion.div>
 
         {/* Responsive grid wrapper for balanced side-by-side display */}
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+        <div className="flex gap-8 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-4">
 
           {/* Card 1: Enterprise Sales Analytics Dashboard */}
           <motion.div
@@ -143,36 +143,35 @@ export default function Dashboard() {
                 GitHub Codebase
               </a>
             </div>
-
-
-            {/* Card 2: Upcoming... */}
-            <motion.div
-              initial={{ opacity: 0, x: 40 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-              viewport={{ once: true }}
-              className="overflow-hidden rounded-3xl border border-zinc-800 bg-zinc-900 flex flex-col justify-between shadow-2xl"
-            >
-              <div>
-                {/* Contained Video Space Placeholder for Emotion App Recording */}
-                <div className="relative h-56 w-full overflow-hidden bg-zinc-950/40 border-b border-zinc-800/80 flex items-center justify-center px-8 py-4">
-                  <img
-                      src={powerBiImages[currentSlide]}
-                      alt={`Power BI Dashboard ${currentSlide + 1}`}
-                      className="h-full w-full object-contain rounded-xl shadow-lg transition-all duration-700"
-                  />
-                  <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-2">
-                    {powerBiImages.map((_, index) => (
-                      <div
-                        key={index}
-                        className={`h-2 w-2 rounded-full ${
-                          currentSlide === index
-                            ? "bg-white"
-                            : "bg-zinc-500"
-                        }`}
-                      />
-                    ))}
-                  </div>
+          </motion.div>
+          {/* Card 2: Power Bi Analytics Dashboard*/}
+          <motion.div
+            initial={{ opacity: 0, x: 40 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="overflow-hidden rounded-3xl border border-zinc-800 bg-zinc-900 flex flex-col justify-between shadow-2xl"
+          >
+            <div>
+              {/* Contained Video Space Placeholder for Emotion App Recording */}
+              <div className="relative h-56 w-full overflow-hidden bg-zinc-950/40 border-b border-zinc-800/80 flex items-center justify-center px-8 py-4">
+                <img
+                    src={powerBiImages[currentSlide]}
+                    alt={`Power BI Dashboard ${currentSlide + 1}`}
+                    className="h-full w-full object-contain rounded-xl shadow-lg transition-all duration-700"
+                />
+                <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-2">
+                  {powerBiImages.map((_, index) => (
+                    <div
+                      key={index}
+                      className={`h-2 w-2 rounded-full ${
+                        currentSlide === index
+                          ? "bg-white"
+                          : "bg-zinc-500"
+                      }`}
+                    />
+                  ))}
+                </div>
                   <span className="absolute top-3 left-3 text-[9px] font-bold tracking-wider text-indigo-400 uppercase bg-zinc-950/90 border border-indigo-500/20 px-2 py-0.5 rounded backdrop-blur">
                     ● Live Preview
                   </span>
@@ -240,9 +239,9 @@ export default function Dashboard() {
                 >
                   GitHub Codebase
                 </a>
-              </div>
-            </motion.div>
+            </div>
           </motion.div>
+          
         </div>
       </div>
     </section>

@@ -1,11 +1,14 @@
 import { kv } from '@vercel/kv';
 import { NextResponse } from "next/server";
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(req: Request) {
   try {
     const body = await req.json();
 
-    // Check payload attributes dynamically
+    console.log("Processing Live Tracking Event:", body.event);
+
     if (body.event === "Resume Opened") {
       await kv.incr("analytics:resume_views");
     } else if (body.event === "Project Clicked") {

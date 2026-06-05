@@ -1,29 +1,31 @@
 import { kv } from '@vercel/kv';
 import { NextResponse } from 'next/server';
 
+// CRITICAL: Tells Next.js App Router to never cache this route statically
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export async function GET() {
   try {
-    // 1. Atomically increment the main visitor counter (Write operation)
+    // 1. Write: Increment main visitor counter atomically on every hit
     const newVisitorCount = await kv.incr('analytics:visitors');
 
-    // 2. Fetch the current live values for the rest of the metrics (Read operations)
-    // If a key doesn't exist yet, Redis returns null, so we use a fallback of 0
+    // 2. Read: Fetch concurrent tracking keys in parallel
+    // If keys don't exist yet, we coalesce them cleanly back to 0
     const projectClicks = (await kv.get<number>('analytics:project_clicks')) || 0;
     const resumeViews = (await kv.get<number>('analytics:resume_views')) || 0;
-    const liveApps = (await kv.get<number>('analytics:live_apps')) || 2; // Default to your 2 live apps
+    const liveApps = (await kv.get<number>('analytics:live_apps')) || 2; 
 
     return NextResponse.json({
-      visitors: newVisitorCount,
-      projectClicks: projectClicks,
-      resumeViews: resumeViews,
-      liveApps: liveApps,
+      visitors: Number(newVisitorCount),
+      projectClicks: Number(projectClicks),
+      resumeViews: Number(resumeViews),
+      liveApps: Number(liveApps),
     });
   } catch (error) {
-    console.error('Vercel KV Multi-Fetch Transaction Error:', error);
+    console.error('Vercel KV Live Ingestion Pipeline Failure:', error);
     return NextResponse.json(
-      { visitors: '--', projectClicks: 0, resumeViews: 0, liveApps: 0, error: 'Database failed' },
+      { visitors: '--', projectClicks: 0, resumeViews: 0, liveApps: 2, error: 'Database timeout' },
       { status: 500 }
     );
   }
