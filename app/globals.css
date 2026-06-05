@@ -94,18 +94,16 @@ html {
   left: 30%;
   animation-delay: -12s;
 }
-
-@keyframes float {
-
+/* MUST be in global CSS */
+@keyframes gradientMove {
   0% {
-    transform: translate(0px,0px) scale(1);
+    background-position: 0% 50%;
   }
-
-  50% {
-    transform: translate(120px,-80px) scale(1.2);
-  }
-
   100% {
-    transform: translate(0px,0px) scale(1);
+    background-position: 200% 50%;
   }
+}
+
+.animate-gradient {
+  animation: gradientMove 6s linear infinite;
 }
