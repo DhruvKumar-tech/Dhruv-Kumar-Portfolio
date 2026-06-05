@@ -1,5 +1,16 @@
 @import "tailwindcss";
 
+/* MUST be in global CSS */
+@keyframes gradientMove {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -93,15 +104,6 @@ html {
   bottom: -150px;
   left: 30%;
   animation-delay: -12s;
-}
-/* MUST be in global CSS */
-@keyframes gradientMove {
-  0% {
-    background-position: 0% 50%;
-  }
-  100% {
-    background-position: 200% 50%;
-  }
 }
 
 .animate-gradient {
