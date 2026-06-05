@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ResumeModal from "@/components/ResumeModal";
 import {
   Database,
@@ -9,30 +9,43 @@ import {
   BarChart3,
   Sparkles,
 } from "lucide-react";
+import { trackEvent } from "@/lib/track";
 
-export default function Hero() {
+export default function Hero() 
+{
+    const [analytics, setAnalytics] = useState({
+    visitors: 0,
+    projectClicks: 0,
+    resumeViews: 0,
+    liveApps: 0,
+    repos: 0,
+    });
+    const [githubStats, setGithubStats] = useState({
+    repos: 0,
+    followers: 0,
+    following: 0,
+    years: 0,
+    });
 
+  useEffect(() => {
+    fetch("/api/github-profile")
+      .then((res) => res.json())
+      .then((data) => {
+
+        const accountYears =
+          new Date().getFullYear() -
+          new Date(data.createdAt).getFullYear();
+
+        setGithubStats({
+          repos: data.repos,
+          followers: data.followers,
+          following: data.following,
+          years: accountYears,
+        });
+      });
+  }, []);
   const [isResumeOpen, setIsResumeOpen] = useState(false);
 
-  const stats = [
-    {
-      icon: <Database size={28} />,
-      value: "12+",
-      label: "Analytics Projects",
-    },
-
-    {
-      icon: <Brain size={28} />,
-      value: "5+",
-      label: "AI Applications",
-    },
-
-    {
-      icon: <BarChart3 size={28} />,
-      value: "7957",
-      label: "Kaggle Rank",
-    },
-  ];
 
   return (
     <section className="relative flex min-h-screen items-center overflow-hidden px-6 pt-28">
@@ -69,12 +82,14 @@ export default function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9 }}
             className="max-w-4xl text-5xl font-black leading-tight tracking-tight md:text-7xl"
-          >
-
-            Dhruv Kumar
-
+          > Turning Data Into
+            <span className="block text-white">
+              Business Decisions
+            </span>
           </motion.h1>
-
+          <h2 className="mt-4 text-2xl font-semibold text-zinc-300">
+            Dhruv Kumar · Data Analyst · Power BI · Python · SQL
+          </h2>
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -82,9 +97,11 @@ export default function Hero() {
             className="mt-8 max-w-2xl text-lg leading-relaxed text-zinc-400 md:text-xl"
           >
 
-            Data Analyst focused on AI systems, Machine Learning,
-            NLP applications, dashboards, and business analytics solutions.
+            Building end-to-end analytics solutions using Power BI,
+            Python, SQL, Machine Learning, and NLP.
 
+            Specialized in transforming raw data into actionable
+            business insights, executive dashboards, and intelligent applications.
           </motion.p>
 
           {/* BUTTONS */}
@@ -95,15 +112,11 @@ export default function Hero() {
             className="mt-10 flex flex-wrap gap-4"
           >
 
-            <a
-              href="#projects"
-              className="rounded-2xl bg-white px-7 py-4 font-semibold text-black transition hover:scale-105"
-            >
-              View Projects
-            </a>
-
             <button
-              onClick={() => setIsResumeOpen(true)}
+              onClick={() => {
+                trackEvent("Resume Opened");
+                setIsResumeOpen(true);
+              }}
               className="rounded-2xl border border-zinc-700 px-7 py-4 font-semibold transition hover:bg-zinc-900"
             >
               Preview Resume
@@ -111,38 +124,8 @@ export default function Hero() {
 
           </motion.div>
 
-          {/* KPI CARDS */}
-          <motion.div
-            initial={{ opacity: 0, y: 60 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.7, duration: 0.8 }}
-            className="mt-16 grid gap-5 sm:grid-cols-3"
-          >
-
-            {stats.map((item, index) => (
-
-              <div
-                key={index}
-                className="rounded-3xl border border-zinc-800 bg-zinc-900/80 p-6 backdrop-blur"
-              >
-
-                <div className="mb-5 text-zinc-300">
-                  {item.icon}
-                </div>
-
-                <h3 className="text-3xl font-black">
-                  {item.value}
-                </h3>
-
-                <p className="mt-2 text-sm text-zinc-400">
-                  {item.label}
-                </p>
-
-              </div>
-            ))}
-          </motion.div>
+          
         </div>
-
         {/* RIGHT SIDE */}
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
@@ -152,81 +135,116 @@ export default function Hero() {
         >
 
           {/* MAIN CARD */}
-          <div className="relative h-[500px] w-[500px] rounded-[40px] border border-zinc-800 bg-gradient-to-br from-zinc-900 to-black p-8 shadow-2xl">
+          <div className="relative h-auto w-[500px] rounded-[40px] border border-zinc-800 bg-gradient-to-br from-zinc-900 to-black p-8 shadow-2xl">
 
             {/* TOP BAR */}
             <div className="mb-10 flex items-center justify-between">
 
               <div>
                 <p className="text-sm text-zinc-500">
-                  AI Analytics System
+                  Portfolio Intelligence
                 </p>
 
                 <h3 className="mt-2 text-2xl font-bold">
-                  Live Intelligence Dashboard
+                    Live Portfolio Analytics
                 </h3>
               </div>
 
-              <div className="rounded-2xl bg-white px-4 py-2 text-sm font-semibold text-black">
-                ACTIVE
-              </div>
             </div>
 
             {/* ANALYTICS BLOCKS */}
             <div className="space-y-6">
+              <div className="space-y-5">
+                {/* Visitors */}
+                <div className="rounded-3xl border border-zinc-800 bg-zinc-900 p-6">
+                  <p className="text-sm text-zinc-500">
+                    Total Visitors
+                  </p>
 
-              <div className="rounded-3xl border border-zinc-800 bg-zinc-900 p-6">
-                <div className="flex items-center justify-between">
+                  <h4 className="mt-2 text-4xl font-black">
+                    {analytics.visitors}
+                  </h4>
 
-                  <div>
+                  <p className="text-emerald-400 text-sm">
+                    Portfolio Reach
+                  </p>
+                </div>
+
+                {/* Metrics */}
+                <div className="grid grid-cols-2 gap-4">
+
+                  <div className="rounded-3xl border border-zinc-800 bg-zinc-900 p-5">
                     <p className="text-sm text-zinc-500">
-                      ML Systems
+                      Project Clicks
                     </p>
 
                     <h4 className="mt-2 text-3xl font-black">
-                      5+
+                      {analytics.projectClicks}
                     </h4>
                   </div>
 
-                  <div className="h-16 w-16 rounded-2xl bg-zinc-800" />
+                  <div className="rounded-3xl border border-zinc-800 bg-zinc-900 p-5">
+                    <p className="text-sm text-zinc-500">
+                      Resume Views
+                    </p>
+
+                    <h4 className="mt-2 text-3xl font-black">
+                      {analytics.resumeViews}
+                    </h4>
+                  </div>
+
                 </div>
-              </div>
 
-              <div className="grid grid-cols-2 gap-5">
+                {/* Apps + Repositories */}
+                <div className="grid grid-cols-2 gap-4">
 
-                <div className="rounded-3xl border border-zinc-800 bg-zinc-900 p-6">
+                  <div className="rounded-3xl border border-zinc-800 bg-zinc-900 p-5">
+                    <p className="text-sm text-zinc-500">
+                      Live Apps
+                    </p>
+
+                    <h4 className="mt-2 text-3xl font-black">
+                      {analytics.liveApps}
+                    </h4>
+                  </div>
+
+                  <div className="rounded-3xl border border-zinc-800 bg-zinc-900 p-5">
+                    <p className="text-sm text-zinc-500">
+                      GitHub Repos
+                    </p>
+
+                    <h4 className="mt-2 text-3xl font-black">
+                      {githubStats.repos}
+                    </h4>
+                  </div>
+
+                </div>
+
+                {/* Engagement */}
+                <div className="rounded-3xl border border-zinc-800 bg-zinc-900 p-5">
+
                   <p className="text-sm text-zinc-500">
-                    Kaggle
+                    Most Engaged Section
                   </p>
 
-                  <h4 className="mt-2 text-3xl font-black">
-                    7957
+                  <h4 className="mt-3 text-2xl font-black">
+                    Projects
                   </h4>
-                </div>
 
-                <div className="rounded-3xl border border-zinc-800 bg-zinc-900 p-6">
-                  <p className="text-sm text-zinc-500">
-                    SQL + NLP
+                  <p className="mt-2 text-emerald-400">
+                    {analytics.projectClicks > 0
+                      ? Math.round(
+                          (analytics.projectClicks /
+                            analytics.visitors) *
+                            100
+                        )
+                      : 0}
+                    % Visitor Interaction Rate
                   </p>
 
-                  <h4 className="mt-2 text-3xl font-black">
-                    Advanced
-                  </h4>
                 </div>
 
-              </div>
-
-              <div className="rounded-3xl border border-zinc-800 bg-zinc-900 p-6">
-
-                <p className="text-sm text-zinc-500">
-                  Current Focus
-                </p>
-
-                <h4 className="mt-4 text-xl font-bold leading-relaxed">
-                  Building production-grade AI analytics systems and interactive business intelligence applications.
-                </h4>
-
-              </div>
+              </div>  
             </div>
           </div>
         </motion.div>
@@ -236,7 +254,6 @@ export default function Hero() {
         isOpen={isResumeOpen}
         onClose={() => setIsResumeOpen(false)}
       />
-
     </section>
   );
 }
