@@ -16,7 +16,7 @@ import AnimatedBackground from "@/components/AnimatedBackground";
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-zinc-950 text-white">
+    <main className="relative min-h-screen text-white">
       <AnimatedBackground />
       
       <AuroraBackground />
