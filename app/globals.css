@@ -61,3 +61,51 @@ html {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+.aurora {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(120px);
+  opacity: 0.6;
+  animation: float 18s infinite ease-in-out;
+}
+
+.aurora-1 {
+  width: 700px;
+  height: 700px;
+  background: red;
+  top: -100px;
+  left: -100px;
+}
+
+.aurora-2 {
+  width: 600px;
+  height: 600px;
+  background: #7c3aed;
+  right: -100px;
+  top: 20%;
+  animation-delay: -6s;
+}
+
+.aurora-3 {
+  width: 650px;
+  height: 650px;
+  background: #10b981;
+  bottom: -150px;
+  left: 30%;
+  animation-delay: -12s;
+}
+
+@keyframes float {
+
+  0% {
+    transform: translate(0px,0px) scale(1);
+  }
+
+  50% {
+    transform: translate(120px,-80px) scale(1.2);
+  }
+
+  100% {
+    transform: translate(0px,0px) scale(1);
+  }
+}

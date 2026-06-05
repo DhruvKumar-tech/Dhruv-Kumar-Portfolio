@@ -10,10 +10,16 @@ import LiveApps from "@/sections/LiveApps";
 import FloatingDock from "@/components/FloatingDock";
 import Timeline from "@/sections/Timeline";
 import GithubStats from "@/sections/GithubStats";
+import AuroraBackground from "@/components/AuroraBackground";
+import AnimatedBackground from "@/components/AnimatedBackground";
+
 
 export default function Home() {
   return (
     <main className="min-h-screen bg-zinc-950 text-white">
+      <AnimatedBackground />
+      
+      <AuroraBackground />
       <Navbar />
       <Hero />
       <Projects />
