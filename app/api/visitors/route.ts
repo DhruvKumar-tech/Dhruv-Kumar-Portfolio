@@ -8,7 +8,7 @@ export const revalidate = 0;
 export async function GET() {
   try {
     // 1. Write: Increment main visitor counter atomically on every hit
-    const newVisitorCount = await redis.incr("analytics:visitors");
+    const visitors =  Number(await redis.get("analytics:visitors")) || 0;
 
     // 2. Read: Fetch concurrent tracking keys in parallel
     // If keys don't exist yet, we coalesce them cleanly back to 0
@@ -17,10 +17,10 @@ export async function GET() {
     const liveApps = Number(await redis.get('analytics:live_apps')) || 0; 
 
     return NextResponse.json({
-      visitors: Number(newVisitorCount),
-      projectClicks: Number(projectClicks),
-      resumeViews: Number(resumeViews),
-      liveApps: Number(liveApps),
+      visitors,
+      projectClicks,
+      resumeViews,
+      liveApps,
     });
   } catch (error) {
     console.error("VISITOR API ERROR:", error);

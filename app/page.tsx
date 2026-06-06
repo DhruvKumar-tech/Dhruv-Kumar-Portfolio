@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect } from "react";
 import Hero from "@/sections/Hero";
 import Navbar from "@/sections/Navbar";
 import Projects from "@/sections/Projects";
@@ -14,6 +17,17 @@ import AnimatedBackground from "@/components/AnimatedBackground";
 
 
 export default function Home() {
+  useEffect(() => {
+    fetch("/api/track", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        event: "Visitor",
+      }),
+    });
+  }, []);
   return (
     <main className="relative min-h-screen text-white">
       <AnimatedBackground />

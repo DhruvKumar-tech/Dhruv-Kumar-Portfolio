@@ -9,9 +9,13 @@ export async function POST(req: Request) {
 
     console.log("Processing Live Tracking Event:", body.event);
 
-    if (body.event === "Resume Opened") {
+    if (body.event === "Visitor") {
+      await redis.incr("analytics:visitors");
+    }
+    else if (body.event === "Resume Opened") {
       await redis.incr("analytics:resume_views");
-    } else if (body.event === "Project Clicked") {
+    }
+    else if (body.event === "Project Clicked") {
       await redis.incr("analytics:project_clicks");
     }
 
