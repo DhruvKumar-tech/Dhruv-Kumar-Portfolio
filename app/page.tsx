@@ -6,7 +6,7 @@ import Navbar from "@/sections/Navbar";
 import Projects from "@/sections/Projects";
 import Dashboard from "@/sections/Dashboard";
 import Chatbot from "@/sections/Chatbot";
-
+import Feedback from "@/sections/Feedback";
 import Kaggle from "@/sections/Kaggle";
 import Contact from "@/sections/Contact";
 import LiveApps from "@/sections/LiveApps";
@@ -42,6 +42,7 @@ export default function Home() {
       
       <Kaggle />
       <Chatbot />
+      <Feedback />
       <Contact />
       <FloatingDock />
     </main>
