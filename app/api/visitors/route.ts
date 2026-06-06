@@ -1,4 +1,4 @@
-import { kv } from '@vercel/kv';
+import { redis } from "@/lib/redis";
 import { NextResponse } from 'next/server';
 
 // CRITICAL: Tells Next.js App Router to never cache this route statically
@@ -8,13 +8,13 @@ export const revalidate = 0;
 export async function GET() {
   try {
     // 1. Write: Increment main visitor counter atomically on every hit
-    const newVisitorCount = await kv.incr('analytics:visitors');
+    const newVisitorCount = await redis.incr("analytics:visitors");
 
     // 2. Read: Fetch concurrent tracking keys in parallel
     // If keys don't exist yet, we coalesce them cleanly back to 0
-    const projectClicks = (await kv.get<number>('analytics:project_clicks')) || 0;
-    const resumeViews = (await kv.get<number>('analytics:resume_views')) || 0;
-    const liveApps = (await kv.get<number>('analytics:live_apps')) || 2; 
+    const projectClicks = number(await redis.get('analytics:project_clicks')) || 0;
+    const resumeViews = number(await redis.get('analytics:resume_views')) || 0;
+    const liveApps = number(await redis.get('analytics:live_apps')) || 0; 
 
     return NextResponse.json({
       visitors: Number(newVisitorCount),
