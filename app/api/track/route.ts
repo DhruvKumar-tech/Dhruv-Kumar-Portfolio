@@ -1,4 +1,4 @@
-import { kv } from '@vercel/kv';
+import { redis } from "@/lib/redis";
 import { NextResponse } from "next/server";
 
 export const dynamic = 'force-dynamic';
@@ -10,9 +10,9 @@ export async function POST(req: Request) {
     console.log("Processing Live Tracking Event:", body.event);
 
     if (body.event === "Resume Opened") {
-      await kv.incr("analytics:resume_views");
+      await redis.incr("analytics:resume_views");
     } else if (body.event === "Project Clicked") {
-      await kv.incr("analytics:project_clicks");
+      await redis.incr("analytics:project_clicks");
     }
 
     return NextResponse.json({ success: true });
