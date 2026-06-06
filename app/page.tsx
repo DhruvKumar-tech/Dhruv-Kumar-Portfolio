@@ -6,7 +6,7 @@ import Navbar from "@/sections/Navbar";
 import Projects from "@/sections/Projects";
 import Dashboard from "@/sections/Dashboard";
 import Chatbot from "@/sections/Chatbot";
-import Github from "@/sections/Github";
+
 import Kaggle from "@/sections/Kaggle";
 import Contact from "@/sections/Contact";
 import LiveApps from "@/sections/LiveApps";
@@ -39,7 +39,7 @@ export default function Home() {
       <Timeline />
       <GithubStats />
       <Dashboard />
-      <Github />
+      
       <Kaggle />
       <Chatbot />
       <Contact />
