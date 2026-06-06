@@ -42,6 +42,23 @@ const projects = [
 ];
 
 export default function Projects() {
+  const handleProjectClick = async (projectName: string, linkType: string) => {
+    try {
+      await fetch("/api/track", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          event: "Project Clicked",
+          project: projectName,
+          type: linkType,
+        }),
+      });
+    } catch (error) {
+      console.error("Project tracking failed:", error);
+    }
+  };
   return (
     <section
       id="projects"
@@ -145,6 +162,9 @@ export default function Projects() {
                       href={project.live}
                       target="_blank"
                       rel="noopener noreferrer"
+                      onClick={() =>
+                        handleProjectClick(project.title, "Live Demo")
+                      }
                       className="flex-1 rounded-xl bg-white py-2.5 text-center text-sm font-semibold text-black transition hover:bg-zinc-200"
                     >
                       Live Demo
@@ -163,6 +183,9 @@ export default function Projects() {
                       href={project.github}
                       target="_blank"
                       rel="noopener noreferrer"
+                      onClick={() =>
+                        handleProjectClick(project.title, "GitHub")
+                      }
                       className="flex-1 rounded-xl border border-zinc-700 bg-zinc-900 py-2.5 text-center text-sm font-semibold text-zinc-300 transition hover:bg-zinc-800"
                     >
                       GitHub Source
