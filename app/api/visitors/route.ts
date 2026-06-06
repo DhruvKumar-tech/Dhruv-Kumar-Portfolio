@@ -12,9 +12,9 @@ export async function GET() {
 
     // 2. Read: Fetch concurrent tracking keys in parallel
     // If keys don't exist yet, we coalesce them cleanly back to 0
-    const projectClicks = number(await redis.get('analytics:project_clicks')) || 0;
-    const resumeViews = number(await redis.get('analytics:resume_views')) || 0;
-    const liveApps = number(await redis.get('analytics:live_apps')) || 0; 
+    const projectClicks = Number(await redis.get('analytics:project_clicks')) || 0;
+    const resumeViews = Number(await redis.get('analytics:resume_views')) || 0;
+    const liveApps = Number(await redis.get('analytics:live_apps')) || 0; 
 
     return NextResponse.json({
       visitors: Number(newVisitorCount),
@@ -23,9 +23,19 @@ export async function GET() {
       liveApps: Number(liveApps),
     });
   } catch (error) {
-    console.error('Vercel KV Live Ingestion Pipeline Failure:', error);
+    console.error("VISITOR API ERROR:", error);
+
     return NextResponse.json(
-      { visitors: '--', projectClicks: 0, resumeViews: 0, liveApps: 2, error: 'Database timeout' },
+      {
+        visitors: "--",
+        projectClicks: 0,
+        resumeViews: 0,
+        liveApps: 2,
+        error:
+          error instanceof Error
+            ? error.message
+            : String(error),
+      },
       { status: 500 }
     );
   }

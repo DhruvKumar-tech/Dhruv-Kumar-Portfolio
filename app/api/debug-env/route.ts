@@ -1,12 +1,13 @@
-// app/api/debug-env/route.ts
-
 import { NextResponse } from "next/server";
 
 export async function GET() {
+  const url = process.env.REDIS_URL || "";
+
   return NextResponse.json({
-    REDIS_URL: !!process.env.REDIS_URL,
-    KV_URL: !!process.env.KV_URL,
-    KV_REST_API_URL: !!process.env.KV_REST_API_URL,
-    KV_REST_API_TOKEN: !!process.env.KV_REST_API_TOKEN,
+    exists: !!url,
+    prefix: url.split(":")[0],
+    startsWithRedis: url.startsWith("redis://"),
+    startsWithRediss: url.startsWith("rediss://"),
+    startsWithHttps: url.startsWith("https://"),
   });
 }
