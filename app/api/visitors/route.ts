@@ -9,7 +9,6 @@ export async function GET() {
   
   try {
     // 1. Write: Increment main visitor counter atomically on every hit
-    await redis.set("analytics:visitors", 2);
     const visitors =  Number(await redis.get("analytics:visitors")) || 0;
 
     // 2. Read: Fetch concurrent tracking keys in parallel
