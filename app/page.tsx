@@ -18,7 +18,6 @@ import AnimatedBackground from "@/components/AnimatedBackground";
 
 export default function Home() {
   useEffect(() => {
-  console.log("Cookie:", document.cookie);
 
   if (
     window.location.hostname === "localhost" ||
