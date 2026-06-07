@@ -18,21 +18,23 @@ import AnimatedBackground from "@/components/AnimatedBackground";
 
 export default function Home() {
   useEffect(() => {
-
+  // Ignore localhost
   if (
     window.location.hostname === "localhost" ||
     window.location.hostname === "127.0.0.1"
   ) {
-    console.log("Localhost ignored");
     return;
   }
 
+  // Ignore owner
   if (document.cookie.includes("owner=true")) {
-    console.log("Owner visit ignored");
     return;
   }
 
-  console.log("Visitor tracked");
+  // Count browser only once
+  if (localStorage.getItem("visitorTracked")) {
+    return;
+  }
 
   fetch("/api/track", {
     method: "POST",
@@ -43,6 +45,8 @@ export default function Home() {
       event: "Visitor",
     }),
   });
+
+  localStorage.setItem("visitorTracked", "true");
 }, []);  return (
     <main className="relative min-h-screen text-white">
       <AnimatedBackground />
