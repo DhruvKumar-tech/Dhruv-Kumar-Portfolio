@@ -44,8 +44,7 @@ export default function Home() {
       event: "Visitor",
     }),
   });
-}, []);
-  return (
+}, []);  return (
     <main className="relative min-h-screen text-white">
       <AnimatedBackground />
 
