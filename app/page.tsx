@@ -18,16 +18,33 @@ import AnimatedBackground from "@/components/AnimatedBackground";
 
 export default function Home() {
   useEffect(() => {
-    fetch("/api/track", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        event: "Visitor",
-      }),
-    });
-  }, []);
+  console.log("Cookie:", document.cookie);
+
+  if (
+    window.location.hostname === "localhost" ||
+    window.location.hostname === "127.0.0.1"
+  ) {
+    console.log("Localhost ignored");
+    return;
+  }
+
+  if (document.cookie.includes("owner=true")) {
+    console.log("Owner visit ignored");
+    return;
+  }
+
+  console.log("Visitor tracked");
+
+  fetch("/api/track", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      event: "Visitor",
+    }),
+  });
+}, []);
   return (
     <main className="relative min-h-screen text-white">
       <AnimatedBackground />
