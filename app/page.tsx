@@ -31,9 +31,16 @@ export default function Home() {
     return;
   }
 
-  // Count browser only once
-  if (localStorage.getItem("visitorTracked")) {
-    return;
+  const lastVisit = localStorage.getItem("visitorTracked");
+
+  if (lastVisit) {
+    const daysPassed =
+      (Date.now() - Number(lastVisit)) /
+      (1000 * 60 * 60 * 24);
+
+    if (daysPassed < 30) {
+      return;
+    }
   }
 
   fetch("/api/track", {
@@ -46,7 +53,10 @@ export default function Home() {
     }),
   });
 
-  localStorage.setItem("visitorTracked", "true");
+  localStorage.setItem(
+    "visitorTracked",
+    Date.now().toString()
+  );
 }, []);  return (
     <main className="relative min-h-screen text-white">
       <AnimatedBackground />
