@@ -5,6 +5,29 @@ export const dynamic = 'force-dynamic';
 
 export async function POST(req: Request) {
   try {
+    const ip =
+      req.headers.get("x-forwarded-for") ||
+      "unknown";
+
+    const rateKey = `rate:${ip}`;
+
+    const current =
+      Number(await redis.get(rateKey)) || 0;
+
+    if (current >= 100) {
+      return NextResponse.json(
+        {
+          error: "Rate limit exceeded",
+        },
+        {
+          status: 429,
+        }
+      );
+    }
+
+    await redis.incr(rateKey);
+    await redis.expire(rateKey, 3600);
+    
     const body = await req.json();
     const country =
       req.headers.get("x-vercel-ip-country") ||
