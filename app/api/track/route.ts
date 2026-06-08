@@ -6,6 +6,7 @@ export const dynamic = 'force-dynamic';
 export async function POST(req: Request) {
   try {
     const body = await req.json();
+    console.log("Visitor Data:", body);
 
     console.log("Processing Live Tracking Event:", body.event);
 
