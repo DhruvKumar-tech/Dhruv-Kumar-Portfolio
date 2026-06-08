@@ -1,10 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import { Turnstile } from "@marsidev/react-turnstile";
+
 
 export default function Feedback() {
   const [name, setName] = useState("");
   const [message, setMessage] = useState("");
+  const [turnstileToken, setTurnstileToken] =
+  useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -17,6 +21,7 @@ export default function Feedback() {
       body: JSON.stringify({
         name,
         message,
+        turnstileToken,
       }),
     });
 
@@ -63,6 +68,15 @@ export default function Feedback() {
                 />
 
                 <div className="text-center"> {/* Centered button to save layout space */}
+                    <Turnstile
+                      siteKey={
+                        process.env
+                          .NEXT_PUBLIC_TURNSTILE_SITE_KEY!
+                      }
+                      onSuccess={(token) =>
+                        setTurnstileToken(token)
+                      }
+                    />
                     <button
                     type="submit"
                     className="w-full sm:w-auto rounded-xl bg-white px-5 py-2.5 text-sm font-semibold text-black transition hover:bg-zinc-200"
