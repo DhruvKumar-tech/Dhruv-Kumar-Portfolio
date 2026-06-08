@@ -16,6 +16,7 @@ export async function POST(req: Request) {
 
     const visitedAt =
       new Date().toISOString();
+    
     console.log("Visitor Data:", body);
 
     console.log("Processing Live Tracking Event:", body.event);
