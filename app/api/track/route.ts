@@ -45,6 +45,21 @@ export async function POST(req: Request) {
             visitCount: 1,
           })
         );
+        await redis.lpush(
+          "analytics:visitor_history",
+          JSON.stringify({
+            visitorId: body.visitorId,
+            country,
+            city,
+            visitedAt,
+          })
+        );
+
+        await redis.ltrim(
+          "analytics:visitor_history",
+          0,
+          499
+        );
 
       } else {
 
