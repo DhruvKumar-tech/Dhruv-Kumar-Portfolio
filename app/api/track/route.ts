@@ -6,6 +6,16 @@ export const dynamic = 'force-dynamic';
 export async function POST(req: Request) {
   try {
     const body = await req.json();
+    const country =
+      req.headers.get("x-vercel-ip-country") ||
+      "Unknown";
+
+    const city =
+      req.headers.get("x-vercel-ip-city") ||
+      "Unknown";
+
+    const visitedAt =
+      new Date().toISOString();
     console.log("Visitor Data:", body);
 
     console.log("Processing Live Tracking Event:", body.event);
@@ -28,8 +38,10 @@ export async function POST(req: Request) {
           visitorKey,
           JSON.stringify({
             visitorId: body.visitorId,
-            firstSeen: new Date().toISOString(),
-            lastSeen: new Date().toISOString(),
+            country,
+            city,
+            firstSeen: visitedAt,
+            lastSeen: visitedAt,
             visitCount: 1,
           })
         );
@@ -39,10 +51,26 @@ export async function POST(req: Request) {
         const data =
           JSON.parse(existing as string);
 
-        data.lastSeen =
-          new Date().toISOString();
-
+        data.lastSeen = visitedAt;
+        data.country = country;
+        data.city = city;
         data.visitCount += 1;
+
+        await redis.lpush(
+          "analytics:visitor_history",
+          JSON.stringify({
+            visitorId: body.visitorId,
+            country,
+            city,
+            visitedAt,
+          })
+        );
+
+        await redis.ltrim(
+          "analytics:visitor_history",
+          0,
+          499
+        );
 
         await redis.set(
           visitorKey,
