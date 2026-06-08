@@ -48,10 +48,41 @@ export async function POST(req: Request) {
       );
     }
 
+    const message =
+      result.data.message.trim();
+
+    const spamPatterns = [
+      "http://",
+      "https://",
+      "www.",
+      ".com",
+      ".xyz",
+      "free money",
+      "buy now",
+      "crypto",
+      "bitcoin",
+    ];
+
+    const isSpam =
+      spamPatterns.some((pattern) =>
+        message.toLowerCase().includes(pattern)
+      );
+
+    if (isSpam) {
+      return NextResponse.json(
+        {
+          success: false,
+          error:
+            "Message rejected by spam filter",
+        },
+        { status: 400 }
+      );
+    }
+
     const feedback = {
       id: crypto.randomUUID(),
       name: result.data.name.trim(),
-      message: result.data.message.trim(),
+      message,
       createdAt: new Date().toISOString(),
     };
 
