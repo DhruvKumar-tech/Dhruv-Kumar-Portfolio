@@ -11,7 +11,44 @@ export async function POST(req: Request) {
     console.log("Processing Live Tracking Event:", body.event);
 
     if (body.event === "Visitor") {
-      await redis.incr("analytics:visitors");
+
+      const visitorKey =
+        `visitor:${body.visitorId}`;
+
+      const existing =
+        await redis.get(visitorKey);
+
+      if (!existing) {
+
+        await redis.incr(
+          "analytics:unique_visitors"
+        );
+
+        await redis.set(
+          visitorKey,
+          JSON.stringify({
+            visitorId: body.visitorId,
+            firstSeen: new Date().toISOString(),
+            lastSeen: new Date().toISOString(),
+            visitCount: 1,
+          })
+        );
+
+      } else {
+
+        const data =
+          JSON.parse(existing as string);
+
+        data.lastSeen =
+          new Date().toISOString();
+
+        data.visitCount += 1;
+
+        await redis.set(
+          visitorKey,
+          JSON.stringify(data)
+        );
+      }
     }
     else if (body.event === "Resume Opened") {
       await redis.incr("analytics:resume_views");
