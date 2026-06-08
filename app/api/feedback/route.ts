@@ -34,6 +34,51 @@ export async function POST(req: Request) {
     await redis.expire(rateKey, 3600);
 
     const body = await req.json();
+    const turnstileToken =
+      body.turnstileToken;
+
+    if (!turnstileToken) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Verification required",
+        },
+        { status: 400 }
+      );
+    }
+
+    const verification =
+      await fetch(
+        "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type":
+              "application/x-www-form-urlencoded",
+          },
+          body: new URLSearchParams({
+            secret:
+              process.env
+                .TURNSTILE_SECRET_KEY!,
+            response:
+              turnstileToken,
+          }),
+        }
+      );
+
+    const verificationResult =
+      await verification.json();
+
+    if (!verificationResult.success) {
+      return NextResponse.json(
+        {
+          success: false,
+          error:
+            "Verification failed",
+        },
+        { status: 400 }
+      );
+    }
 
     const result =
       FeedbackSchema.safeParse(body);

@@ -12,6 +12,12 @@ export default function Feedback() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!turnstileToken) {
+      alert(
+        "Please complete verification."
+      );
+      return;
+    }
 
     await fetch("/api/feedback", {
       method: "POST",
