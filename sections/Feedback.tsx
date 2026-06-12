@@ -10,16 +10,20 @@ export default function Feedback() {
   const [turnstileToken, setTurnstileToken] =
   useState("");
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
-    console.log(
-      "Feedback Visitor ID:",
-      localStorage.getItem("visitorId")
-    );
+
+    const visitorId =
+      localStorage.getItem("visitorId");
+
+    console.log("Submitting:", {
+      visitorId,
+      name,
+      message,
+    });
+
     if (!turnstileToken) {
-      alert(
-        "Please complete verification."
-      );
+      alert("Please complete verification.");
       return;
     }
 
@@ -29,8 +33,7 @@ export default function Feedback() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        visitorId:
-          localStorage.getItem("visitorId"),
+        visitorId,
         name,
         message,
         turnstileToken,
