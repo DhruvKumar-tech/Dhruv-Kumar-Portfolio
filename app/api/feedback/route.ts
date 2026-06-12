@@ -34,6 +34,10 @@ export async function POST(req: Request) {
     await redis.expire(rateKey, 3600);
 
     const body = await req.json();
+    console.log(
+      "Feedback Visitor ID:",
+      body.visitorId
+    );
     const turnstileToken =
       body.turnstileToken;
 
@@ -126,6 +130,7 @@ export async function POST(req: Request) {
 
     const feedback = {
       id: crypto.randomUUID(),
+      visitorId: body.visitorId,
       name: result.data.name.trim(),
       message,
       createdAt: new Date().toISOString(),

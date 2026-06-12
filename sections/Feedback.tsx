@@ -12,6 +12,10 @@ export default function Feedback() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log(
+      "Feedback Visitor ID:",
+      localStorage.getItem("visitorId")
+    );
     if (!turnstileToken) {
       alert(
         "Please complete verification."
@@ -25,6 +29,8 @@ export default function Feedback() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
+        visitorId:
+          localStorage.getItem("visitorId"),
         name,
         message,
         turnstileToken,
