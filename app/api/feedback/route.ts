@@ -35,8 +35,8 @@ export async function POST(req: Request) {
 
     const body = await req.json();
     console.log(
-      "Feedback Visitor ID:",
-      body.visitorId
+      "FULL FEEDBACK BODY:",
+      JSON.stringify(body, null, 2)
     );
     const turnstileToken =
       body.turnstileToken;

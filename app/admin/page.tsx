@@ -46,6 +46,9 @@ export default async function AdminPage() {
   
   const data = await getAnalytics();
   const feedback = await getFeedback();
+  
+  console.log("Analytics Data:", JSON.stringify(data, null, 2));
+  console.log("Feedback Data:", JSON.stringify(feedback, null, 2));
 
   console.log("Analytics:", data);
   console.log("Feedback:", feedback);
@@ -72,16 +75,16 @@ export default async function AdminPage() {
         </div>
 
         <div className="rounded-xl bg-zinc-900 p-6">
-          <h2>Resume Views</h2>
+          <h2>Feedback Count</h2>
           <p className="text-3xl font-bold">
-            {data.resumeViews}
+            {feedback.feedback?.length || 0}
           </p>
         </div>
 
         <div className="rounded-xl bg-zinc-900 p-6">
-          <h2>Project Clicks</h2>
-          <p className="text-3xl font-bold">
-            {data.projectClicks}
+          <h2>Latest Feedback</h2>
+          <p className="text-sm">
+            {feedback.feedback?.[0]?.name || "No Feedback"}
           </p>
         </div>
       </div>
@@ -100,13 +103,17 @@ export default async function AdminPage() {
         </button>
       </div>
       
+      
       <div className="mt-10 grid gap-6 md:grid-cols-2">
+        
         <section>
           <h2 className="mb-4 text-2xl font-bold">
             💬 Feedback
           </h2>
         
-
+          <pre className="mb-4 rounded bg-zinc-950 p-4 text-xs overflow-auto">
+            {JSON.stringify(feedback.feedback?.[0], null, 2)}
+          </pre>
           <div className="h-[350px] overflow-auto rounded-xl bg-zinc-900">
               <table className="w-full">
                 <thead>
