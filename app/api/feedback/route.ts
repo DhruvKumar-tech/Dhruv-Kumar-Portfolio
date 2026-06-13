@@ -34,25 +34,21 @@ export async function POST(req: Request) {
     await redis.expire(rateKey, 3600);
 
     const body = await req.json();
-    console.log(
-      "FULL FEEDBACK BODY:",
-      JSON.stringify(body, null, 2)
-    );
-    const turnstileToken =
-      body.turnstileToken;
+    
+    const turnstileToken = body.turnstileToken;
 
-    if (!turnstileToken) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: "Verification required",
-        },
-        { status: 400 }
-      );
-    }
+    if (process.env.NODE_ENV !== "development") {
+      if (!turnstileToken) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: "Verification required",
+          },
+          { status: 400 }
+        );
+      }
 
-    const verification =
-      await fetch(
+      const verification = await fetch(
         "https://challenges.cloudflare.com/turnstile/v0/siteverify",
         {
           method: "POST",
@@ -62,25 +58,27 @@ export async function POST(req: Request) {
           },
           body: new URLSearchParams({
             secret:
-              process.env
-                .TURNSTILE_SECRET_KEY!,
-            response:
-              turnstileToken,
+              process.env.TURNSTILE_SECRET_KEY!,
+            response: turnstileToken,
           }),
         }
       );
 
-    const verificationResult =
-      await verification.json();
+      const verificationResult =
+        await verification.json();
 
-    if (!verificationResult.success) {
-      return NextResponse.json(
-        {
-          success: false,
-          error:
-            "Verification failed",
-        },
-        { status: 400 }
+      if (!verificationResult.success) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: "Verification failed",
+          },
+          { status: 400 }
+        );
+      }
+    } else {
+      console.log(
+        "Skipping Turnstile verification in development"
       );
     }
 
@@ -138,6 +136,11 @@ export async function POST(req: Request) {
 
     await redis.lpush(
       "portfolio:feedback",
+      JSON.stringify(feedback)
+    );
+
+    await redis.set(
+      `feedback:${feedback.visitorId}`,
       JSON.stringify(feedback)
     );
 

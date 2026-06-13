@@ -84,11 +84,11 @@ export default function Home() {
     "visitorTracked",
     Date.now().toString()
   );
-  console.log("Generated Visitor ID:", visitorId);
+
 }, []);  return (
     <main className="relative min-h-screen text-white">
       <AnimatedBackground />
-
+      
       <Navbar />
       <Hero />
       <Projects />

@@ -2,15 +2,6 @@ import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   const body = await req.json();
-    console.log(
-        "Entered:",
-        body.token
-    );
-
-    console.log(
-        "Expected:",
-        process.env.ADMIN_TOKEN
-    );
 
   if (
     body.token !==
@@ -38,6 +29,6 @@ export async function POST(req: Request) {
       sameSite: "strict",
     }
   );
-  console.log("Login success");
+  
   return response;
 }

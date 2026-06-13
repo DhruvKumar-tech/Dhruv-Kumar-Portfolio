@@ -15,13 +15,8 @@ export default function Feedback() {
 
     const visitorId =
       localStorage.getItem("visitorId");
-
-    console.log("Submitting:", {
-      visitorId,
-      name,
-      message,
-    });
-
+    
+    
     if (!turnstileToken) {
       alert("Please complete verification.");
       return;
