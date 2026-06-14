@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 
+import { useRouter } from "next/navigation";
 
-import AdminPanel from "./AdminPanel";
 
 
 // Define strict interfaces for TypeScript validation
@@ -59,6 +59,8 @@ const SOCIALS: SocialLink[] = [
 ];
 
 export default function Sidebar() {
+  const [isHovered, setIsHovered] = useState<boolean>(false);
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   useEffect(() => {
     const toggleSidebar = () => {
@@ -409,40 +411,51 @@ export default function Sidebar() {
 
         {/* Admin Login Button at bottom */}
         <div style={{padding: "32px 24px", borderTop: "1px solid rgba(99,102,241,0.12)" }}>
-          <button
-            onClick={() => setAdminOpen((v) => !v)}
-            style={{
-              width: "100%",
-              padding: "10px 14px",
-              borderRadius: "8px",
-              background: adminOpen
-                ? "linear-gradient(135deg,#6366f1,#8b5cf6)"
-                : "rgba(99,102,241,0.1)",
-              border: "1px solid rgba(99,102,241,0.3)",
-              color: adminOpen ? "#fff" : "#a5b4fc",
-              fontSize: "13px",
-              fontWeight: 600,
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: "8px",
-              transition: "all 0.2s",
-              letterSpacing: "0.3px",
-            }}
-          >
-            <span>⚙</span>
-            Admin Login
-            <span style={{ marginLeft: "auto", fontSize: "10px", opacity: 0.7 }}>
-              {adminOpen ? "‹" : "›"}
-            </span>
-          </button>
+          <div style={{ borderTop: "1px solid rgba(99,102,241,0.12)" }}>
+            <button
+              onClick={() => {
+                // Opens the admin login portal in a separate browser tab
+                window.open("/admin-login", "_blank"); 
+              }}
+              // 2. Update hover state when mouse enters or leaves the button area
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
+              style={{
+                width: "100%",
+                padding: "10px 14px",
+                borderRadius: "8px",
+                // 3. Dynamic Background: Highlights with a gradient on hover, falls back to subtle transparent indigo
+                background: isHovered 
+                  ? "linear-gradient(135deg, #6366f1, #8b5cf6)" 
+                  : "rgba(99,102,241,0.1)",
+                // 4. Dynamic Border: Solidifies and brightens on hover
+                border: isHovered
+                  ? "1px solid rgba(139, 92, 246, 0.6)"
+                  : "1px solid rgba(99, 102, 241, 0.3)",
+                // 5. Dynamic Text Color: Turns crisp white on hover
+                color: isHovered ? "#fff" : "#a5b4fc",
+                fontSize: "13px",
+                fontWeight: 600,
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "8px",
+                // 6. Dynamic Shadow: Gives a glowing lift effect on hover
+                boxShadow: isHovered 
+                ? "0 4px 12px rgba(99, 102, 241, 0.25)" 
+                  : "none",
+                // Smoothly animates all style changes over 0.2 seconds
+                transition: "all 0.2s ease-in-out",
+                letterSpacing: "0.3px",
+              }}
+            >
+              <span>⚙</span>
+              Admin Login
+            </button>
+          </div>        
         </div>
-      
       </aside>
-
-      {/* ── Admin Panel (secondary sidebar) ── */}
-      <AdminPanel isOpen={adminOpen && isOpen} onClose={() => setAdminOpen(false)} />
     </>
   );
 }
