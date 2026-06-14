@@ -10,7 +10,7 @@ import Feedback from "@/sections/Feedback";
 import Kaggle from "@/sections/Kaggle";
 import Contact from "@/sections/Contact";
 import LiveApps from "@/sections/LiveApps";
-import FloatingDock from "@/components/FloatingDock";
+
 import Timeline from "@/sections/Timeline";
 import GithubStats from "@/sections/GithubStats";
 import AnimatedBackground from "@/components/AnimatedBackground";
@@ -101,7 +101,7 @@ export default function Home() {
       <Chatbot />
       <Feedback />
       <Contact />
-      <FloatingDock />
+      
     </main>
   );
 }

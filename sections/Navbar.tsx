@@ -26,9 +26,39 @@ export default function Navbar() {
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
         
         {/* Logo */}
-        <h1 className="text-xl font-bold tracking-wide">
-          DhruvAnalytics
-        </h1>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "14px",
+          }}
+        >
+          <button
+            onClick={() =>
+              window.dispatchEvent(
+                new Event("toggle-sidebar")
+              )
+            }
+            style={{
+              background: "transparent",
+              border: "none",
+              cursor: "pointer",
+              color: "#fff",
+              fontSize: "22px",
+            }}
+          >
+            ☰
+          </button>
+
+          <div
+            style={{
+              fontSize: "20px",
+              fontWeight: 700,
+            }}
+          >
+            DhruvAnalytics
+          </div>
+        </div>
 
         {/* Desktop Menu */}
         <div className="hidden gap-8 text-sm text-zinc-300 md:flex">
@@ -38,54 +68,7 @@ export default function Navbar() {
           <a href="#contact" className="hover:text-white">Contact</a>
         </div>
 
-        {/* 🔥 Hamburger Menu */}
-        <div className="relative">
-          <button
-            onClick={() => setOpen(!open)}
-            className="rounded-lg p-2 hover:bg-zinc-800"
-          >
-            {open ? <X size={22} /> : <Menu size={22} />}
-          </button>
-
-          {/* Dropdown */}
-          {open && (
-            <div className="absolute right-0 mt-3 w-48 rounded-xl border border-zinc-800 bg-zinc-900 shadow-lg">
-              
-              {/* Admin Login */}
-              {!isAdmin && (
-                <a
-                  href="/admin-login"
-                  className="block px-4 py-3 text-sm hover:bg-zinc-800"
-                >
-                  🔐 Admin Login
-                </a>
-              )}
-
-              {/* Admin Dashboard */}
-              {isAdmin && (
-                <a
-                  href="/admin"
-                  className="block px-4 py-3 text-sm hover:bg-zinc-800"
-                >
-                  📊 Dashboard
-                </a>
-              )}
-
-              {/* Logout */}
-              {isAdmin && (
-                <button
-                  onClick={async () => {
-                    await fetch("/api/logout");
-                    window.location.reload();
-                  }}
-                  className="w-full text-left px-4 py-3 text-sm text-red-400 hover:bg-zinc-800"
-                >
-                  🚪 Logout
-                </button>
-              )}
-            </div>
-          )}
-        </div>
+        
       </div>
     </motion.nav>
   );

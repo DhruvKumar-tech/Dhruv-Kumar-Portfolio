@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import Layout from "@/components/Layout";
 
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -43,11 +44,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="bg-black text-white antialiased">
-        {children}
+        <Layout>
+          {children}
+        </Layout>
 
-        {/* 2. Global footer injection point */}
         <Footer />
-
         <Analytics />
         <SpeedInsights />
       </body>
