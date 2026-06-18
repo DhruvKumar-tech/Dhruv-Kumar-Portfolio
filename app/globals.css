@@ -14,6 +14,11 @@
 }
 
 
+::-webkit-scrollbar {
+  height: 0px;
+  width: 0px;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -111,4 +116,15 @@ html {
 
 .animate-gradient {
   animation: gradientMove 6s linear infinite;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }

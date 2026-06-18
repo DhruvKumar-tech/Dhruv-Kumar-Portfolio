@@ -1,12 +1,17 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-
-import { useRouter } from "next/navigation";
-
+import MiniWindow, { type NotebookKey } from "./MiniWindow";
 
 
 // Define strict interfaces for TypeScript validation
+
+interface InfoRowProps {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+  valueColor?: string;
+}
 
 interface SocialLink {
   label: string;
@@ -58,9 +63,70 @@ const SOCIALS: SocialLink[] = [
   },
 ];
 
+
+const HIGHLIGHTS: { id: NotebookKey; title: string }[] = [
+  {
+    id: "projects",
+    title: "Projects",
+  },
+  {
+    id: "experience",
+    title: "Experience",
+  },
+  {
+    id: "education",
+    title: "Education",
+  },
+  {
+    id: "aifocus",
+    title: "AI Focus",
+  },
+  {
+    id: "dashboards",
+    title: "Dashboards",
+  },
+];
+
+function InfoRow({ icon, label, value, valueColor }: InfoRowProps): React.JSX.Element {
+    return (
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "22px minmax(82px, 0.45fr) minmax(0, 1fr)",
+          alignItems: "center",
+          gap: "10px",
+          padding: "10px 0",
+          
+        }}
+      >
+        <span style={{ fontSize: "12px", width: "22px", textAlign: "center", color: "#f8fafc" }}>{icon}</span>
+        <span style={{ fontSize: "10px", color: "#a3a3a3", fontWeight: 700, letterSpacing: "1.2px", textTransform: "uppercase" }}>{label}</span>
+        <span style={{ fontSize: "12px", color: valueColor || "#ffffff", fontWeight: 600, lineHeight: 1.45, minWidth: 0, overflowWrap: "anywhere" }}>
+          {value}
+        </span>
+      </div>
+      
+    );
+}
+
 export default function Sidebar() {
+  const [openNotebooks, setOpenNotebooks] =
+    useState<NotebookKey[]>([]);
+  const [activeNotebook, setActiveNotebook] =
+    useState<NotebookKey | null>(null);
+  const theme = "dark";
+
+  useEffect(() => {
+    document.documentElement.classList.toggle(
+      "dark",
+      theme === "dark"
+    );
+  }, [theme]);
+
+  const [activeCard, setActiveCard] =
+  useState<string | null>(null);
+  const sidebarWidth = 450;
   const [isHovered, setIsHovered] = useState<boolean>(false);
-  const router = useRouter();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   useEffect(() => {
     const toggleSidebar = () => {
@@ -79,48 +145,33 @@ export default function Sidebar() {
       );
     };
   }, []);
-  const [adminOpen, setAdminOpen] = useState<boolean>(false);
-  
 
-  function StatCard({
-    value,
-    label,
-  }: {
-    value: string;
-    label: string;
-  }) {
-    return (
-      <div
-        style={{
-          padding: "10px",
-          borderRadius: "10px",
-          background:
-            "rgba(0,0,0,0.45)",
-          border:
-            "1px solid rgba(99,102,241,0.15)",
-          textAlign: "center",
-        }}
-      >
-        <div
-          style={{
-            fontWeight: 700,
-            color: "#94a3b8",
-          }}
-        >
-          {value}
-        </div>
+  const toggleNotebook = (notebook: NotebookKey) => {
+    if (openNotebooks.includes(notebook)) {
+      closeNotebook(notebook);
+      return;
+    }
 
-        <div
-          style={{
-            fontSize: "10px",
-            color: "#94a3b8",
-          }}
-        >
-          {label}
-        </div>
-      </div>
-    );
-  }
+    setOpenNotebooks((current) => [...current, notebook]);
+    setActiveNotebook(notebook);
+  };
+
+  const closeNotebook = (notebook: NotebookKey) => {
+    setOpenNotebooks((current) => {
+      const next = current.filter((item) => item !== notebook);
+
+      if (activeNotebook === notebook) {
+        setActiveNotebook(next[next.length - 1] || null);
+      }
+
+      return next;
+    });
+  };
+
+  const closeAllNotebooks = () => {
+    setOpenNotebooks([]);
+    setActiveNotebook(null);
+  };
 
   return (
     <>
@@ -128,7 +179,7 @@ export default function Sidebar() {
       {/* ── Backdrop ── */}
       {isOpen && (
         <div
-          onClick={() => { setIsOpen(false); setAdminOpen(false); }}
+          onClick={() => setIsOpen(false)}
           style={{
             position: "fixed",
             inset: 0,
@@ -138,26 +189,28 @@ export default function Sidebar() {
           }}
         />
       )}
+    
 
       {/* ── Main Sidebar ── */}
       <aside
         style={{
           position: "fixed",
           top: 0,
-          left: isOpen ? 0 : "-288px",
-          width: "288px",
+          left: isOpen? 0  : `-${sidebarWidth}px`,
+          width: `${sidebarWidth}px`,
           height: "100vh",
           zIndex: 999,
           background: `
           linear-gradient(
             180deg,
-            rgba(00,00,00,0.92) 0%,
-            rgba(00,00,00,0.88) 50%,
-            rgba(00,00,00,0.95) 100%
-          )`,
-          backdropFilter: "blur(24px)",
-          WebkitBackdropFilter: "blur(24px)",
-          boxShadow: "0 0 50px rgba(99,102,241,0.18)",
+            rgba(70,40,00,0.4) 0%,
+            rgba(50,0,00,0.55) 35%,
+            rgba(20,00,00,0.97) 100%
+          )
+          `,
+          backdropFilter: "blur(32px)",
+          WebkitBackdropFilter: "blur(32px)",
+          boxShadow: "0 0 40px rgba(59,130,246,0.12)",
           borderRight: "1px solid rgba(255,255,255,0.08)",
           display: "flex",
           flexDirection: "column",
@@ -170,47 +223,29 @@ export default function Sidebar() {
         {/* Profile Section */}
         <div
           style={{
-            padding: "32px 24px",
+            margin: "18px",
+            padding: "20px",
+            borderRadius: "24px",
+            textAlign: "center",
             background:
-              "linear-gradient(180deg, rgba(99,102,241,.18), rgba(99,102,241,.03))",
+              "rgba(255,255,255,0.04)",
+            border:
+              "1px solid rgba(255,255,255,0.08)",
             backdropFilter: "blur(20px)",
-            borderBottom:
-              "1px solid rgba(255,255,255,.08)",
-            position: "relative",
-            overflow: "visible",
-            
           }}
         >
-
-          <div
-            style={{
-              position: "absolute",
-              width: "180px",
-              height: "180px",
-              borderRadius: "50%",
-              background:
-                "radial-gradient(circle, rgba(99,102,241,.4), transparent)",
-              top: "-60px",
-              left: "50%",
-              transform: "translateX(-50%)",
-              filter: "blur(30px)",
-              zIndex: 0,
-              pointerEvents: "none",
-            }}
-          />
-
           {/* Profile Photo */}
           <div
             style={{
               width: "110px",
               height: "110px",
               borderRadius: "50%",
-              margin: "0 auto 12px",
-              background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
-              padding: "2px",
-              boxShadow: "0 0 24px rgba(99,102,241,0.4)",
-              animation: "pulse 4s infinite ease-in-out",
-              zIndex: 2,
+              margin: "0 auto 18px",
+              background:
+                "linear-gradient(135deg,#60a5fa,#ffffff,#8b5cf6)",
+              padding: "3px",
+              boxShadow:
+                "0 0 30px rgba(99,102,241,0.45)",
             }}
           >
             <div
@@ -219,18 +254,38 @@ export default function Sidebar() {
                 height: "100%",
                 borderRadius: "50%",
                 overflow: "hidden",
-                background: "#1a1a2e",
+                background: "#000",
               }}
             >
               <img
                 src="/profile.jpg"
                 alt="Dhruv Kumar"
-                style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                }}
+                onError={(e) => {
                   const target = e.currentTarget;
                   target.style.display = "none";
+
                   if (target.parentElement) {
-                    target.parentElement.innerHTML = `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:32px;color:#6366f1">DK</div>`;
+                    target.parentElement.innerHTML = `
+                      <div
+                        style="
+                          width:100%;
+                          height:100%;
+                          display:flex;
+                          align-items:center;
+                          justify-content:center;
+                          color:white;
+                          font-size:36px;
+                          font-weight:700;
+                        "
+                      >
+                        DK
+                      </div>
+                    `;
                   }
                 }}
               />
@@ -239,44 +294,56 @@ export default function Sidebar() {
 
           <h2
             style={{
-              marginTop: "20px",
-              marginBottom: "8px",
-              fontSize: "30px",
-              fontWeight: 700,
-              color: "#f8fafc",
+              margin: 0,
+              fontSize: "22px",
+              fontWeight: 800,
+              color: "#ffffff",
               letterSpacing: "-0.5px",
-              
+              textShadow:
+                "0 0 15px rgba(255,255,255,0.15)",
             }}
           >
             Dhruv Kumar
           </h2>
+
           <p
             style={{
-              marginBottom: "24px",
-              color: "#60a5fa",
-              fontWeight: 600,
-              letterSpacing: "2px",
+              marginTop: "8px",
+              marginBottom: "14px",
               fontSize: "12px",
+              color: "#60a5fa",
+              fontWeight: 700,
+              letterSpacing: "2px",
+              textTransform: "uppercase",
             }}
           >
-            DATA ANALYST • GENAI • ML
+            Data Analyst • AI Engineer
           </p>
 
           <p
             style={{
-              margin: 0,
-              fontSize: "11px",
-              color: "#94a3b8",
-              lineHeight: 1.6,
+              maxWidth: "280px",
+              margin: "0 auto",
+              fontSize: "13px",
+              color: "#d1d5db",
+              lineHeight: 1.7,
             }}
           >
-            Building AI-powered analytics,
-            dashboards, NLP systems and
-            machine learning applications.
+            Transforming data into business insights
+            through Analytics, Machine Learning,
+            NLP and AI-powered solutions.
           </p>
+
 
           {/* Social Links */}
-          <div style={{ display: "flex", justifyContent: "center", gap: "10px", marginTop: "14px" }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              gap: "12px",
+              marginTop: "22px",
+            }}
+          >
             {SOCIALS.map((s) => (
               <a
                 key={s.label}
@@ -285,61 +352,121 @@ export default function Sidebar() {
                 rel="noopener noreferrer"
                 title={s.label}
                 style={{
-                  width: "32px",
-                  height: "32px",
-                  borderRadius: "8px",
-                  background: "rgba(99,102,241,0.1)",
-                  border: "1px solid rgba(99,102,241,0.2)",
+                  width: "40px",
+                  height: "40px",
+                  borderRadius: "12px",
+                  background:
+                    "rgba(255,255,255,0.06)",
+                  border:
+                    "1px solid rgba(255,255,255,0.08)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  color: "#f8fafc",
+                  color: "#ffffff",
                   textDecoration: "none",
-                  transition: "all 0.2s",
+                  transition: "all .3s ease",
                 }}
               >
                 {s.icon}
               </a>
             ))}
           </div>
-        
         </div>
 
         {/* Resume-style Quick Info */}
-        <div style={{ padding: "32px 24px",borderBottom: "1px solid rgba(99,102,241,0.12)" }}>
-          <p style={labelStyle}>Professional Profile</p>
+        <div style={{ margin: "18px",
+            padding: "20px",background: "rgba(255,255,255,0.03)",
+        border: "1px solid rgba(255,255,255,0.08)",        
+        borderRadius:"16px",borderBottom: "1px solid rgba(99,102,241,0.12)" }}>
+          <div style={labelStyle}>
+            Professional Profile
+
+            <div
+              style={{
+                position: "absolute",
+                bottom: 0,
+                left: 0,
+                width: "60px",
+                height: "2px",
+                borderRadius: "999px",
+                background:
+                  "linear-gradient(90deg,#ffffff,#6b7280)",
+              }}
+            />
+          </div>
 
           <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
             
             <InfoRow
-              icon="📧"
+              icon={<svg
+              viewBox="0 0 24 24"
+              width="14"
+              height="14"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              >
+              <path d="M4 4h16v16H4z"/>
+              <path d="M4 7l8 6 8-6"/>
+              </svg>
+              }
               label="Email"
               value="dhruvkumar010200@gmail.com"
             />
 
             <InfoRow
-              icon="🎓"
+              icon={
+              <svg
+              viewBox="0 0 24 24"
+              width="14"
+              height="14"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              >
+              <path d="M2 8l10-5 10 5-10 5z"/>
+              <path d="M6 10v4c0 2 3 4 6 4s6-2 6-4v-4"/>
+              </svg>
+              }
               label="Education"
               value="MBA Data Science"
             />
 
             <InfoRow
-              icon="🤖"
+              icon={
+              <svg
+              viewBox="0 0 24 24"
+              width="14"
+              height="14"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              >
+              <path d="M12 2a5 5 0 00-5 5v1a4 4 0 00-2 3.5A4.5 4.5 0 009 16v2h6v-2a4.5 4.5 0 004-4.5A4 4 0 0017 8V7a5 5 0 00-5-5z"/>
+              </svg>
+              }
               label="Specialization"
               value="AI & Analytics"
             />
 
             <InfoRow
-              icon="📍"
+              icon={
+              <svg
+              viewBox="0 0 24 24"
+              width="14"
+              height="14"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              >
+              <path d="M12 21s7-5.5 7-11a7 7 0 10-14 0c0 5.5 7 11 7 11z"/>
+              <circle cx="12" cy="10" r="2"/>
+              </svg>
+              }
               label="Location"
               value="Gurgaon"
             />
 
-            <InfoRow
-              icon="🟢"
-              label="Availability"
-              value="Open to Work"
-            />
           </div>
         </div>
         
@@ -353,33 +480,80 @@ export default function Sidebar() {
             Highlights
           </p>
 
+          {/* Highlights Slider */}
+          
           <div
             style={{
-              display: "grid",
-              gridTemplateColumns:
-                "repeat(2,1fr)",
-              gap: "8px",
+              marginTop: "24px",
             }}
           >
-            <StatCard
-              value="3+"
-              label="Years Exp"
-            />
+            <div
+              style={{
+                
+                display: "flex",
+                overflowX: "auto",
+                gap: "14px",
+                scrollSnapType: "x mandatory",
+                paddingBottom: "8px",
+                scrollbarWidth: "none",
+                msOverflowStyle: "none",
+              }}
+            >
+              {HIGHLIGHTS.map((item) => (
+                <button
+                              key={item.id}
+                  type="button"
+                  title="Click to open or close"
+                  onClick={() => toggleNotebook(item.id)}
+                  
+                  style={{
+                    padding: "12px",
+                    borderRadius: "12px",
+                    border: "1px solid rgba(255,255,255,0.08)",
+                    background: openNotebooks.includes(item.id)
+                      ? "rgba(255,255,255,0.14)"
+                      : "rgba(0,00,0,0.04)",
+                    color: "#fff",
+                    fontSize: "12px",
+                    fontWeight: 600,
+                    textAlign: "center",
+                    cursor: "pointer",
+                    transition: "all 0.25s ease",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = "scale(1.05)";
+                    e.currentTarget.style.background =
+                      "linear-gradient(135deg,#ff12f0,#8b5cf6)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = "scale(1)";
+                    e.currentTarget.style.background =
+                      openNotebooks.includes(item.id)
+                        ? "rgba(255,255,255,0.14)"
+                        : "rgba(255,255,255,0.04)";
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: "14px",
+                      fontWeight: 600,
+                    }}
+                  >
+                    {item.title}
+                  </div>
 
-            <StatCard
-              value="10+"
-              label="Projects"
-            />
-
-            <StatCard
-              value="2"
-              label="Degrees"
-            />
-
-            <StatCard
-              value="AI"
-              label="Focus"
-            />
+                  <div
+                    style={{
+                      fontSize: "11px",
+                      opacity: 0.6,
+                      marginTop: "4px",
+                    }}
+                  >
+                  
+                  </div>
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -407,7 +581,7 @@ export default function Sidebar() {
             ))}
           </div>
         </div>
-
+        
 
         {/* Admin Login Button at bottom */}
         <div style={{padding: "32px 24px", borderTop: "1px solid rgba(99,102,241,0.12)" }}>
@@ -426,7 +600,7 @@ export default function Sidebar() {
                 borderRadius: "8px",
                 // 3. Dynamic Background: Highlights with a gradient on hover, falls back to subtle transparent indigo
                 background: isHovered 
-                  ? "linear-gradient(135deg, #6366f1, #8b5cf6)" 
+                  ? "linear-gradient(135deg, #fffbbb, #8b5cf6)" 
                   : "rgba(99,102,241,0.1)",
                 // 4. Dynamic Border: Solidifies and brightens on hover
                 border: isHovered
@@ -455,39 +629,71 @@ export default function Sidebar() {
             </button>
           </div>        
         </div>
+        {activeCard && (
+        <div
+          onClick={() =>
+            setActiveCard(null)
+          }
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 1500,
+            background:
+              "rgba(0,0,0,0.55)",
+            backdropFilter:
+              "blur(10px)",
+          }}
+        >
+          <div
+            onClick={(e) =>
+              e.stopPropagation()
+            }
+            style={{
+              position: "absolute",
+              right: 50,
+              top: 50,
+              width: 700,
+              height: "85vh",
+              borderRadius: 24,
+
+              background:
+                "#f8f8f8",
+
+              color: "#111",
+
+              overflowY: "auto",
+
+              boxShadow:
+                "0 40px 80px rgba(0,0,0,.5)",
+
+              border:
+                "1px solid rgba(0,0,0,.1)",
+            }}
+          >
+          </div>
+        </div>
+      )}
       </aside>
+      <MiniWindow
+        openNotebooks={openNotebooks}
+        activeNotebook={activeNotebook}
+        onSelect={setActiveNotebook}
+        onCloseNotebook={closeNotebook}
+        onClose={closeAllNotebooks}
+      />
     </>
   );
 }
 
 // ── Sub-components & Type Rules ──
 
-interface InfoRowProps {
-  icon: string;
-  label: string;
-  value: string;
-  valueColor?: string;
-}
-
-function InfoRow({ icon, label, value, valueColor }: InfoRowProps): React.JSX.Element {
-  return (
-    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-      <span style={{ fontSize: "12px", width: "16px", textAlign: "center" }}>{icon}</span>
-      <span style={{ fontSize: "11px", color: "#475569", minWidth: "52px" }}>{label}</span>
-      <span style={{ fontSize: "11px", color: valueColor || "#94a3b8", fontWeight: 500, flex: 1 }}>
-        {value}
-      </span>
-    </div>
-  );
-}
-
-const labelStyle = {
+const  labelStyle= {
   fontSize: "11px",
   fontWeight: 700,
-  color: "#cbd5e1",
-  letterSpacing: "3px",
-  textTransform: "uppercase",
-  marginBottom: "16px",
-  background:"rgba(255,255,255,.05)",
-
+  letterSpacing: "4px",
+  textTransform: "uppercase" as const,
+  color: "#ffffff",
+  marginBottom: "18px",
+  position: "relative" as const,
+  paddingBottom: "10px",
 };
